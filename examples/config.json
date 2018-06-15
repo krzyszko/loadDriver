@@ -1,0 +1,13 @@
+{
+   "components" : [ 
+       {
+                "plugin": "./samplers/http/http.so",
+                "params": { 
+                    "method_name": "GET",
+                    "response" : "http_response",
+                    "request" : "http_request",
+                    "url": "www.onet.pl"
+                }
+        }
+   ]
+}
