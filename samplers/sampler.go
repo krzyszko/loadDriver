@@ -3,11 +3,11 @@ package samplers
 import (
 	"io"
 
-	"github.com/krzyszko/loaddriver/imp"
+	"github.com/krzyszko/loaddriver/ess"
 )
 
 type Sampler interface {
-	imp.Component
+	ess.Component
 	io.Writer
 	io.Reader
 }

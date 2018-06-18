@@ -1,7 +1,7 @@
 package listeners
 
-import "github.com/krzyszko/loaddriver/imp"
+import "github.com/krzyszko/loaddriver/ess"
 
 type Listener interface {
-	imp.Component
+	ess.Component
 }
