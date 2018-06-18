@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -35,7 +36,7 @@ func (h *httpSampler) Init(registry map[string]interface{}) error {
 			return err
 		}
 
-		registry[h.RespPayLoad] = body
+		fmt.Println(body)
 		return nil
 	}
 	return nil

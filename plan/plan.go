@@ -4,7 +4,7 @@ import "github.com/krzyszko/loaddriver/ess"
 
 type Plan struct {
 	components []ess.Component
-	registry   map[string][]byte
+	registry   map[string]interface{}
 }
 
 func (p *Plan) AddComponent(c ess.Component) {
@@ -12,7 +12,7 @@ func (p *Plan) AddComponent(c ess.Component) {
 }
 
 func (p *Plan) Run() error {
-	p.registry = make(map[string][]byte)
+	p.registry = make(map[string]interface{})
 	defer func() { p.registry = nil }()
 	for _, c := range p.components {
 		err := c.Init(p.registry)

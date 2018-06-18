@@ -6,7 +6,7 @@ import (
 
 type Component interface {
 	Run() error
-	Init(map[string][]byte) error
+	Init(map[string]interface{}) error
 }
 
 type ComponentConfig struct {

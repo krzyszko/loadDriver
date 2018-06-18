@@ -48,7 +48,7 @@ func loadComponent(c ess.ComponentConfig) (ess.Component, error) {
 	if err != nil {
 		return nil, err
 	}
-	v := reflect.ValueOf(cpnt).FieldByName("Components")
+	v := reflect.Indirect(reflect.ValueOf(cpnt)).FieldByName("Components")
 	if v.IsValid() && v.CanSet() {
 		if len(v.Bytes()) > 0 {
 			v.Set(reflect.ValueOf(loadComponents))
