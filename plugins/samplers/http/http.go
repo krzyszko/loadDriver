@@ -12,6 +12,7 @@ type httpSampler struct {
 	MethodName  string          `json:"method_name"`
 	URL         string          `json:"url"`
 	Components  json.RawMessage `json:"components"`
+	method      func() error
 }
 
 func (h *httpSampler) Init(registry map[string]interface{}) error {
