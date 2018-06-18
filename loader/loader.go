@@ -3,6 +3,7 @@ package loader
 import (
 	"encoding/json"
 	"plugin"
+	"reflect"
 
 	"github.com/krzyszko/loaddriver/config"
 	"github.com/krzyszko/loaddriver/ess"
@@ -14,7 +15,7 @@ type LoaderError struct {
 
 func (l LoaderError) Error() string { return l.error }
 
-func LoadFromConfiguration(c *config.Config) ([]ess.Component, error) {
+func ComponentsFromConfiguration(c *config.Config) ([]ess.Component, error) {
 	components, err := loadComponents(c.Components)
 	if err != nil {
 		return nil, err
@@ -47,8 +48,12 @@ func loadComponent(c ess.ComponentConfig) (ess.Component, error) {
 	if err != nil {
 		return nil, err
 	}
-	//to do evaluate components
-
+	v := reflect.ValueOf(cpnt).FieldByName("Components")
+	if v.IsValid() && v.CanSet() {
+		if len(v.Bytes()) > 0 {
+			v.Set(reflect.ValueOf(loadComponents))
+		}
+	}
 	component, ok := cpnt.(ess.Component)
 	if !ok {
 		return nil, &LoaderError{"Unable to cast to ess.Component"}

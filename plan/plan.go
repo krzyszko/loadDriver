@@ -15,7 +15,7 @@ func (p *Plan) Run() error {
 	p.registry = make(map[string][]byte)
 	defer func() { p.registry = nil }()
 	for _, c := range p.components {
-		err := c.Configure(p.registry)
+		err := c.Init(p.registry)
 		if err != nil {
 			return err
 		}
