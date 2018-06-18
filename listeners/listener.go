@@ -1,7 +1,7 @@
 package listeners
 
-import "github.com/krzyszko/loaddriver/plan"
+import "github.com/krzyszko/loaddriver/imp"
 
 type Listener interface {
-	plan.Component
+	imp.Component
 }

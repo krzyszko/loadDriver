@@ -1,21 +1,22 @@
 package main
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 )
 
-type HTTP struct {
-	reqPayload  string `json:request`
-	respPayLoad string `json:response`
-	methodName  string `json:method_name`
-	URL         string `json:url`
-	method      func() error
+type httpSampler struct {
+	ReqPayload  string          `json:"request"`
+	RespPayLoad string          `json:"response"`
+	MethodName  string          `json:"method_name"`
+	URL         string          `json:"url"`
+	Components  json.RawMessage `json:"components"`
 }
 
-func (h *HTTP) Init(registry map[string]interface{}) error {
+func (h *httpSampler) Init(registry map[string]interface{}) error {
 	var httpMethod func(string) (*http.Response, error)
-	switch h.methodName {
+	switch h.MethodName {
 	case "GET":
 		httpMethod = http.Get
 	default:
@@ -33,16 +34,18 @@ func (h *HTTP) Init(registry map[string]interface{}) error {
 			return err
 		}
 
-		registry[h.respPayLoad] = body
+		registry[h.RespPayLoad] = body
 		return nil
 	}
 	return nil
 }
 
-func (h *HTTP) Run() error {
+func (h *httpSampler) Run() error {
 	err := h.method()
 	if err != nil {
 		return err
 	}
 	return nil
 }
+
+var Plugin httpSampler

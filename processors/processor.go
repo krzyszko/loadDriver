@@ -3,11 +3,11 @@ package processors
 import (
 	"io"
 
-	"github.com/krzyszko/loaddriver/plan"
+	"github.com/krzyszko/loaddriver/imp"
 )
 
 type Processor interface {
 	io.Writer
 	io.Reader
-	plan.Component
+	imp.Component
 }
