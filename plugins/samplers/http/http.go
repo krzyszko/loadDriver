@@ -15,11 +15,11 @@ type httpSampler struct {
 	MethodName  string `json:"method_name"`
 	URL         string `json:"url"`
 	method      func() error
-	components  []ess.Component
+	Cmpts       []ess.Component
 }
 
 func (h *httpSampler) Init(registry map[string]interface{}) error {
-	for _, cpnt := range h.components {
+	for _, cpnt := range h.Cmpts {
 		cpnt.Init(registry)
 	}
 	var httpMethod func(string) (*http.Response, error)
@@ -48,7 +48,7 @@ func (h *httpSampler) Init(registry map[string]interface{}) error {
 }
 
 func (h *httpSampler) Run() error {
-	for _, cpnt := range h.components {
+	for _, cpnt := range h.Cmpts {
 		cpnt.Run()
 	}
 	err := h.method()
@@ -58,4 +58,6 @@ func (h *httpSampler) Run() error {
 	return nil
 }
 
-var Plugin httpSampler
+func Handler() ess.Component {
+	return new(httpSampler)
+}

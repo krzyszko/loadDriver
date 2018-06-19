@@ -43,22 +43,24 @@ func loadComponent(c ess.ComponentConfig) (ess.Component, error) {
 	if err != nil {
 		return nil, err
 	}
-	cpnt, err := p.Lookup("Plugin")
+	creator, err := p.Lookup("Handler")
 	if err != nil {
 		return nil, err
 	}
+	fcreate := creator.(func() ess.Component)
+	cpnt := fcreate()
 	err = json.Unmarshal(c.Params, cpnt)
 	if err != nil {
 		return nil, err
 	}
-	cnfComponents := struct {
+	cnfComponents := &struct {
 		Components []ess.ComponentConfig
 	}{}
 	err = json.Unmarshal(c.Params, cnfComponents)
 	if err != nil {
 		return nil, err
 	}
-	cpnts := reflect.Indirect(reflect.ValueOf(cpnt)).FieldByName("components")
+	cpnts := reflect.Indirect(reflect.ValueOf(cpnt)).FieldByName("Cpnts")
 	if len(cnfComponents.Components) > 0 {
 		log.Debug("Evaluating components")
 		if cpnts.IsValid() && cpnts.CanSet() {
