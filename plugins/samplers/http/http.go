@@ -15,7 +15,7 @@ type httpSampler struct {
 	MethodName  string `json:"method_name"`
 	URL         string `json:"url"`
 	method      func() error
-	Cmnts       []ess.Component
+	Cmpts       []ess.Component
 }
 
 func (h *httpSampler) Init(registry map[string]interface{}) error {
