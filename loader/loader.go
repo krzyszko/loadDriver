@@ -51,12 +51,21 @@ func loadComponent(c ess.ComponentConfig) (ess.Component, error) {
 	if err != nil {
 		return nil, err
 	}
-	conCpnts := reflect.Indirect(reflect.ValueOf(cpnt)).FieldByName("Components")
+	cnfComponents := struct {
+		Components []ess.ComponentConfig
+	}{}
+	err = json.Unmarshal(c.Params, cnfComponents)
+	if err != nil {
+		return nil, err
+	}
 	cpnts := reflect.Indirect(reflect.ValueOf(cpnt)).FieldByName("components")
-	if conCpnts.IsValid() {
+	if len(cnfComponents.Components) > 0 {
+		log.Debug("Evaluating components")
 		if cpnts.IsValid() && cpnts.CanSet() {
-			var components []ess.Component
-			json.Unmarshal(conCpnts.Bytes(), components)
+			components, err := loadComponents(cnfComponents.Components)
+			if err != nil {
+				return nil, err
+			}
 			cpnts.Set(reflect.ValueOf(components))
 		} else {
 			_, fn, line, _ := runtime.Caller(0)
