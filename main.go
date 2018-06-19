@@ -11,9 +11,16 @@ import (
 )
 
 func main() {
-	var configFile string
+	var (
+		configFile string
+		debug      bool
+	)
 	flag.StringVar(&configFile, "config", "", "path to config file")
+	flag.BoolVar(&debug, "debug", false, "Enable/disable debuging")
 	flag.Parse()
+	if debug {
+		log.SetLevel(log.DebugLevel)
+	}
 	con, err := config.GetConfig(configFile)
 	if err != nil {
 		log.Errorf("%s", err)
