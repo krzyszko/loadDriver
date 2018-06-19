@@ -63,7 +63,7 @@ func loadComponent(c ess.ComponentConfig) (ess.Component, error) {
 	cpnts := reflect.Indirect(reflect.ValueOf(cpnt)).FieldByName("Cpnts")
 	if len(cnfComponents.Components) > 0 {
 		log.Debug("Evaluating components")
-		if cpnts.CanSet() {
+		if cpnts.IsValid() && cpnts.CanSet() {
 			components, err := loadComponents(cnfComponents.Components)
 			if err != nil {
 				return nil, err
