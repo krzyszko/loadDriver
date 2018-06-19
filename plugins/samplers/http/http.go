@@ -1,22 +1,27 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/krzyszko/loaddriver/ess"
+
+	"github.com/apex/log"
 )
 
 type httpSampler struct {
-	ReqPayload  string          `json:"request"`
-	RespPayLoad string          `json:"response"`
-	MethodName  string          `json:"method_name"`
-	URL         string          `json:"url"`
-	Components  json.RawMessage `json:"components"`
+	ReqPayload  string `json:"request"`
+	RespPayLoad string `json:"response"`
+	MethodName  string `json:"method_name"`
+	URL         string `json:"url"`
 	method      func() error
+	components  []ess.Component
 }
 
 func (h *httpSampler) Init(registry map[string]interface{}) error {
+	for _, cpnt := range h.components {
+		cpnt.Init(registry)
+	}
 	var httpMethod func(string) (*http.Response, error)
 	switch h.MethodName {
 	case "GET":
@@ -36,13 +41,16 @@ func (h *httpSampler) Init(registry map[string]interface{}) error {
 			return err
 		}
 
-		fmt.Println(body)
+		log.Debugf("%s\n", body)
 		return nil
 	}
 	return nil
 }
 
 func (h *httpSampler) Run() error {
+	for _, cpnt := range h.components {
+		cpnt.Run()
+	}
 	err := h.method()
 	if err != nil {
 		return err

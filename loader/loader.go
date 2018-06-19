@@ -2,9 +2,12 @@ package loader
 
 import (
 	"encoding/json"
+	"fmt"
 	"plugin"
 	"reflect"
+	"runtime"
 
+	"github.com/apex/log"
 	"github.com/krzyszko/loaddriver/config"
 	"github.com/krzyszko/loaddriver/ess"
 )
@@ -48,15 +51,22 @@ func loadComponent(c ess.ComponentConfig) (ess.Component, error) {
 	if err != nil {
 		return nil, err
 	}
-	v := reflect.Indirect(reflect.ValueOf(cpnt)).FieldByName("Components")
-	if v.IsValid() && v.CanSet() {
-		if len(v.Bytes()) > 0 {
-			v.Set(reflect.ValueOf(loadComponents))
+	conCpnts := reflect.Indirect(reflect.ValueOf(cpnt)).FieldByName("Components")
+	cpnts := reflect.Indirect(reflect.ValueOf(cpnt)).FieldByName("components")
+	if conCpnts.IsValid() {
+		if cpnts.IsValid() && cpnts.CanSet() {
+			var components []ess.Component
+			json.Unmarshal(conCpnts.Bytes(), components)
+			cpnts.Set(reflect.ValueOf(components))
+		} else {
+			_, fn, line, _ := runtime.Caller(0)
+			log.Errorf("Components configured but not expected by %s:%d", fn, line)
 		}
 	}
 	component, ok := cpnt.(ess.Component)
 	if !ok {
-		return nil, &LoaderError{"Unable to cast to ess.Component"}
+		_, fn, line, _ := runtime.Caller(0)
+		return nil, &LoaderError{fmt.Sprintf("%s:%d: cpnt doesn't implement interface", fn, line)}
 	}
 	return component, nil
 }

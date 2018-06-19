@@ -1,6 +1,9 @@
 package plan
 
-import "github.com/krzyszko/loaddriver/ess"
+import (
+	"github.com/apex/log"
+	"github.com/krzyszko/loaddriver/ess"
+)
 
 type Plan struct {
 	components []ess.Component
@@ -12,6 +15,7 @@ func (p *Plan) AddComponent(c ess.Component) {
 }
 
 func (p *Plan) Run() error {
+	log.Info("Running plan...")
 	p.registry = make(map[string]interface{})
 	defer func() { p.registry = nil }()
 	for _, c := range p.components {
